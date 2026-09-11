@@ -1,8 +1,16 @@
 # VLA + JEPA Bitcoin Forecasting
 
-A Python/PyTorch research system that turns price, macroeconomic, on-chain and liquidation data into interpretable market states and probabilistic Bitcoin forecasts. One entry point, `main.py`, coordinates data ingestion, feature engineering, model fitting, historical replay and visual reporting.
+**Five market perspectives. Four forecast horizons. An inspectable representation of Bitcoin.**
+
+Bitcoin behaves differently over a day, a week and a fortnight. This Python/PyTorch system learns from price, macroeconomic, on-chain and liquidation data to represent those changing conditions and produce probabilistic forecasts at **1, 3, 7 and 15 days**. It exposes the specialist states, forecast uncertainty and valuation context behind its outputs.
+
+The engineering contribution is a complete research workflow: data ingestion, feature construction, representation learning, forecast fusion, calibration, historical replay and visual reporting, coordinated through `main.py`.
 
 The project explores a **two-stage design inspired by vision–language architectures (VLA)**: one stage builds representations, and a second stage interprets them. Here, that idea is applied to numerical market data. A separate **five-world JEPA pipeline** learns predictive representations and produces shadow forecasts.
+
+- **BTC-specific context:** valuation, liquidity, price dynamics and leverage are represented as distinct information domains.
+- **Horizon-aware reasoning:** learned horizon embeddings let the forecast change with the question being asked, from tomorrow's distribution to the next fortnight's.
+- **Visible model behavior:** specialist diagnostics, world attention, quantile bands and Kalman overlays make the system practical to inspect and discuss.
 
 ![BTC forecast with median predictions, uncertainty bands and a Kalman valuation overlay](artifacts/final/live_forecast/latest_plot.png)
 
@@ -50,6 +58,60 @@ The JEPA pipeline uses chronological, purged splits and separate validation, cal
 **JEPA runs in shadow mode by default.** Its forecasts go to `reports/world_jepa/live_shadow_forecast.csv`, with checkpoints under `artifacts/world_jepa/`. The main forecast and screenshots above come from the specialist-fusion path. The `main.py` JEPA bridge does not certify the full test suite or promote the shadow model.
 
 See [world_encoder.py](dual_model_forecaster/world_jepa/world_encoder.py), [router.py](dual_model_forecaster/world_jepa/router.py), [pipeline.py](dual_model_forecaster/world_jepa/pipeline.py) and [world_jepa.json](configs/world_jepa.json).
+
+## What the learned BTC representations show
+
+The saved JEPA run uses **all five information domains**, with mean world-attention shares between **12.7% and 27.3%**. Its test-window regime diagnostics expose different rates of change: structure and environment have 1 and 2 dominant-state transitions, while edges and movement have 17 and 16. These are inspectable internal behaviors, influenced by the model's targets and smoothing; predictive usefulness is measured separately below.
+
+**The most promising result is at the longer horizons:** in the saved shadow evaluation, the 15-day forecast achieved **7.52% lower reported WIS** than the strongest included causal baseline; the 7-day improvement was **1.08%**. Lower scores indicate better probabilistic forecasts under this evaluator. The full horizon breakdown keeps the shorter-horizon weaknesses visible:
+
+| Horizon | Scored forecasts | JEPA WIS | Best included baseline WIS | JEPA relative score |
+| --- | ---: | ---: | ---: | --- |
+| 1 day | 364 | 0.015200 | 0.010870 | 39.84% worse |
+| 3 days | 362 | 0.020530 | 0.019488 | 5.35% worse |
+| 7 days | 358 | 0.030845 | 0.031181 | **1.08% better** |
+| 15 days | 350 | 0.046159 | 0.049915 | **7.52% better** |
+
+The best included comparator was causal EWMA at every horizon. These results come from one historical test window with overlapping targets. Equal-weight mean WIS across the four horizons is **1.15% worse overall**; the aggregate bootstrap confidence interval crosses zero, and the 15-day lower-tail miss rate exceeds the configured limit. The model remains in shadow mode. The result supports further investigation of week-to-fortnight representations; it does not establish a general forecasting advantage.
+
+<details>
+<summary>Evaluation provenance and the main-model comparison</summary>
+
+The table is transcribed from local `reports/world_jepa/run_summary.json`, corroborated by `candidate_metrics.csv`, `causal_baseline_metrics.csv` and `promotion_gates.json`. Stored datasets and generated reports are intentionally excluded from Git; the aggregate results are recorded here.
+
+- Run content hash: `0c69eb376f3849da04317df1cbafe2f6c81bcf424d397721fa13d3163342f41c`.
+- Training observations: August 17, 2017–July 9, 2024.
+- Test origins: September 8, 2025–September 7, 2026; each horizon is scored only where its outcome is available.
+- Selection and test segments are separated by a 30-day purge; router validation and calibration use separate selection subsegments.
+- Relative improvement is `100 * (baseline WIS - JEPA WIS) / baseline WIS`.
+- The strongest included baseline is selected by the lowest reported test WIS among five causal comparators at each horizon.
+- Aggregate bootstrap: 1,000 samples, 15-row blocks; reported interval for candidate-minus-baseline loss is `[-0.001292, +0.001695]`.
+
+The **main specialist-fusion model** has a separate, longer historical replay. Its saved June evaluation in `reports/walk_forward/brutal_baseline_metrics.csv` trails EWMA at every selected horizon. It mixes 8,120 rows bearing the current candidate name with 24 rows from an older candidate; it is not an evaluation of the September refit:
+
+| Horizon | Scored forecasts | Main-model WIS | EWMA WIS |
+| --- | ---: | ---: | ---: |
+| 1 day | 2,037 | 0.129725 | 0.063286 |
+| 3 days | 2,035 | 0.225253 | 0.109892 |
+| 7 days | 2,031 | 0.425146 | 0.175804 |
+| 15 days | 2,015 | 0.347587 | 0.267626 |
+
+These two evaluators use different WIS formulations and evaluation samples. Compare each model with its own matched baseline; their absolute WIS values should not be compared across tables. The main screenshots illustrate the specialist-fusion system, while the longer-horizon improvement above belongs to the JEPA shadow experiment.
+
+</details>
+
+## How it compares with other forecasting approaches
+
+The project's distinctive contribution is **BTC-specific representation learning with inspectable modeling stages**, integrated into a working data-to-report pipeline.
+
+| Approach | What it offers | This project's emphasis |
+| --- | --- | --- |
+| **GARCH / volatility baselines** | Established models of conditional variance with multi-step uncertainty forecasts. [arch documentation](https://bashtage.github.io/arch/univariate/forecasting.html) | Combines volatility with valuation, macro liquidity, directional state and liquidation pressure. These simple baselines remain serious competitors in the local evaluation. |
+| **PatchTST** | Patch-based transformers with channel independence, supporting forecasting and self-supervised representation learning. [Original paper](https://arxiv.org/abs/2211.14730) | Uses PatchTST-like models within specialist ensembles, then adds explicit forecast roles, calibration and a separate JEPA future-embedding objective. |
+| **Amazon Chronos-2** | Pretrained zero-shot forecasting for univariate, multivariate and covariate-informed tasks. [Amazon Science](https://www.amazon.science/blog/introducing-chronos-2-from-univariate-to-universal-forecasting) | Trains on deliberately organized BTC feature domains and exposes specialist states, forecast roles and horizon-dependent world attention. |
+| **Google TimesFM-3** | A pretrained multivariate forecasting model supporting past and known-future covariates, point forecasts and quantiles. [Google Research](https://research.google/blog/timesfm-3-a-zero-shot-foundation-model-for-multivariate-forecasting/) | Focuses on domain-specific representation learning, semantic interpretation and research diagnostics for Bitcoin. |
+
+The external-model comparison concerns architecture and scope. No matched benchmark against standalone PatchTST, Chronos-2 or TimesFM-3 has been established in this repository. The portfolio strength is the implemented system and its transparent evaluation, with a specific, measurable longer-horizon JEPA result to investigate further.
 
 ## UML architecture
 
@@ -137,7 +199,7 @@ uv sync --frozen
 uv run python main.py --help
 ```
 
-The help command inspects available options without refreshing data or fitting models. A full run needs access to the upstream sources and enough historical observations to build the feature tables and training splits. Local databases, credentials and trained checkpoints are intentionally excluded from Git.
+The help command inspects available options without refreshing data or fitting models. This is a source-and-visuals repository: databases, CSV datasets, extensionless data exports, credentials and trained checkpoints are intentionally excluded from Git. A full run needs locally provisioned historical inputs and access to the upstream sources.
 
 Set the credentials needed for your data sources in your shell or a local `.env` file:
 
@@ -147,7 +209,9 @@ Set the credentials needed for your data sources in your shell or a local `.env`
 | `BITLAB_API_TOKEN` | ResearchBitcoin on-chain endpoints |
 | `COINALYZE_API_KEY` | Funding, positioning and liquidation refresh |
 
-Missing FRED or Coinalyze credentials skip those updates; they do not replace the missing historical data. The included manual macro and liquidation CSV inputs preserve the history consumed by the pipeline. Local `.env` files are loaded automatically and remain ignored by Git.
+Missing FRED or Coinalyze credentials skip those updates; they do not replace the missing historical data. Local `.env` files are loaded automatically and remain ignored by Git.
+
+Before a full run, provision your manual macro exports under `get_data/manual/` and historical liquidation inputs under `liquidations/data/`, including `directional_volatility_potential.csv`. Optional heatmap enrichment files live under `liquidations/Liquedation heatmap/data/` and `liquidations/Liquedation heatmap/outputs/`. Daily API refresh does not reconstruct all of this history; a fresh clone is ready for code inspection, but needs local data preparation before training.
 
 Run the complete daily cycle:
 
@@ -172,7 +236,7 @@ Other useful options include `--world-jepa-smoke` for a bounded JEPA wiring chec
 | Path | Purpose |
 | --- | --- |
 | `main.py` | Daily orchestration and live visualizations |
-| `get_data/`, `liquidations/` | Source ingestion and consumed historical inputs |
+| `get_data/`, `liquidations/` | Source ingestion code; historical inputs are provisioned locally |
 | `compute_data/` | Technical, macro, on-chain and specialist feature construction |
 | `dual_model_forecaster/` | Specialist models, fusion, calibration, baselines and JEPA |
 | `model_assembly/common.py` | Assembly and full-history refitting |
@@ -180,7 +244,7 @@ Other useful options include `--world-jepa-smoke` for a bounded JEPA wiring chec
 | `configs/final/`, `configs/world_jepa.json` | Main model and shadow model configuration |
 | `artifacts/final/live_forecast/` | Three selected README images; other generated files stay local |
 
-[.gitignore](.gitignore) is an explicit allowlist: runtime dependencies, consumed inputs, installation metadata, this README and its three images. Credentials, databases, checkpoints, other generated reports, old descriptive documents, tests, notebooks and unrelated entry points stay on disk but are omitted from Git. New runtime dependencies must be added to the allowlist.
+[.gitignore](.gitignore) is an explicit allowlist: runtime source code, configurations, installation metadata, this README and its three images. Credentials, databases, CSV/TSV datasets, extensionless data exports, checkpoints, other generated reports, old descriptive documents, tests, notebooks and unrelated entry points stay on disk but are omitted from Git. New runtime source dependencies must be added to the allowlist.
 
 ## Evaluation boundary
 

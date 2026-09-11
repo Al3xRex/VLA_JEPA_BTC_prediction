@@ -18,16 +18,10 @@
 !/dual_model_forecaster/world_jepa/
 !/get_data/
 !/get_data/macro/
-!/get_data/manual/
 !/get_data/oc/
 !/get_data/scraped/
 !/get_data/ta/
 !/liquidations/
-!/liquidations/Liquedation heatmap/
-!/liquidations/Liquedation heatmap/data/
-!/liquidations/Liquedation heatmap/data/daily/
-!/liquidations/Liquedation heatmap/outputs/
-!/liquidations/data/
 !/model_assembly/
 
 # Project setup and portfolio README
@@ -124,28 +118,18 @@
 !/configs/final_role_selection.json
 !/configs/world_jepa.json
 
-# Consumed macro and liquidation inputs; preserve historical feature coverage
-!/get_data/manual/ism_manufactoring
-!/get_data/manual/ism_services
-!/get_data/manual/major_M2
-!/get_data/manual/nfci-data-series-csv.csv
-!/liquidations/data/directional_volatility_potential.csv
-!/liquidations/data/liquidations_daily.csv
-!/liquidations/data/btc_price_daily.csv
-!/liquidations/Liquedation heatmap/data/daily/btc_oi_liquidations_daily.csv
-!/liquidations/Liquedation heatmap/outputs/btc_all_available_history_pressure.csv
-!/liquidations/Liquedation heatmap/outputs/btc_all_available_history_levels.csv
-!/liquidations/Liquedation heatmap/outputs/btc_oi_interest_areas_levels.csv
-
 # README showcase images
 !/artifacts/final/live_forecast/latest_plot.png
 !/artifacts/final/live_forecast/specialist_live_predictions.png
 !/artifacts/final/live_forecast/kalman_projection_scope.png
 
-# Keep credentials and database files excluded, including nested variants.
+# Keep credentials and stored datasets excluded, including nested variants.
 .env
 .env.*
 *.env
+*.csv
+*.csv.*
+*.tsv
 *.duckdb
 *.duckdb.*
 *.db
