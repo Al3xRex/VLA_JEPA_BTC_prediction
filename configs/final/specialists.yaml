@@ -1,0 +1,42 @@
+{
+  "buckets": {
+    "structure": {
+      "anchor": "patchtst_lb256",
+      "retained": [
+        { "group_name": "medium", "name": "linear_lb144" },
+        { "group_name": "long", "name": "gru_lb192" },
+        { "group_name": "ultra", "name": "patchtst_lb256" }
+      ]
+    },
+    "environment": {
+      "anchor": "patchtst_lb256",
+      "retained": [
+        { "group_name": "medium_long", "name": "mlp_lb160" },
+        { "group_name": "long", "name": "patchtst_lb256" }
+      ]
+    },
+    "edges": {
+      "anchor": "mlp_lb36",
+      "retained": [
+        { "group_name": "short", "name": "mlp_lb36" },
+        { "group_name": "medium", "name": "linear_lb45" }
+      ]
+    },
+    "movement": {
+      "anchor": "mlp_lb36",
+      "retained": [
+        { "group_name": "short", "name": "mlp_lb36" },
+        { "group_name": "medium", "name": "mlp_lb60" }
+      ]
+    },
+    "liquidation": {
+      "anchor": "patchtst_lb96",
+      "retained": [
+        { "group_name": "short", "name": "mlp_lb36" },
+        { "group_name": "medium", "name": "gru_lb75" },
+        { "group_name": "attention_patch", "name": "patchtst_lb96" },
+        { "group_name": "attention_category", "name": "category_attention_lb96" }
+      ]
+    }
+  }
+}

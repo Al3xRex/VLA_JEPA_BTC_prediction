@@ -1,0 +1,4 @@
+{
+  "base_config": "configs/final_role_selection.json",
+  "artifact_root": "artifacts/final"
+}

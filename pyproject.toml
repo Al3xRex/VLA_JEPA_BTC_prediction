@@ -1,0 +1,15 @@
+[project]
+name = "2tiermodel"
+version = "0.1.0"
+description = "Bitcoin forecasting with specialist fusion and five-world JEPA representation learning"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "arch>=8.0.0",
+    "duckdb>=1.5.2",
+    "matplotlib>=3.10.8",
+    "pandas>=3.0.2",
+    "requests>=2.33.1",
+    "scikit-learn>=1.8.0",
+    "torch>=2.11.0",
+]

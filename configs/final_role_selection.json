@@ -1,0 +1,44 @@
+{
+  "experiment_name": "final_role_selection",
+  "splits": {
+    "min_train_days": 1600,
+    "max_outer_folds": 3,
+    "outer_fold_index": -1,
+    "inner_min_train_days": 1100,
+    "inner_segment_days": 180,
+    "specialist_validation_days": 120
+  },
+  "specialists": {
+    "training": {
+      "max_epochs": 4,
+      "patience": 2
+    }
+  },
+  "fusion": {
+    "horizon_sets": {
+      "set_a": [1, 3, 7, 15],
+      "set_b": [3, 7, 14, 21],
+      "set_c": [1, 3, 7, 14, 21]
+    },
+    "calibration_methods": [
+      "raw",
+      "additive_quantile",
+      "isotonic",
+      "conformal",
+      "disagreement_width",
+      "asymmetric_lower_tail"
+    ],
+    "training": {
+      "max_epochs": 5,
+      "patience": 3,
+      "horizon_weights": {
+        "1": 1.4,
+        "3": 1.25,
+        "7": 1.0,
+        "14": 0.9,
+        "15": 0.9,
+        "21": 0.85
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "default": "additive_quantile",
+  "fallbacks": ["raw", "isotonic", "conformal", "asymmetric_lower_tail", "disagreement_conformal"],
+  "allowed": [
+    "additive_quantile",
+    "raw",
+    "isotonic",
+    "conformal",
+    "asymmetric_lower_tail",
+    "disagreement_conformal"
+  ],
+  "replacement_threshold_abs": 0.02,
+  "monitors": [
+    "coverage_gap",
+    "lower_tail_miss_rate",
+    "upper_tail_miss_rate",
+    "width_stability",
+    "center_drift"
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "version": 2,
+  "enabled": true,
+  "mode": "shadow",
+  "seed": 7,
+  "base_config": "configs/final_role_selection.json",
+  "artifact_root": "artifacts/world_jepa",
+  "report_root": "reports/world_jepa",
+  "feature_manifest": "reports/world_jepa/feature_audit/feature_manifest.json",
+  "worlds": {
+    "structure": {
+      "context_length": 256,
+      "target_block_length": 16,
+      "feature_budget": 24,
+      "regime_count": 6
+    },
+    "environment": {
+      "context_length": 256,
+      "target_block_length": 16,
+      "feature_budget": 24,
+      "regime_count": 6
+    },
+    "edges": {
+      "context_length": 96,
+      "target_block_length": 8,
+      "feature_budget": 16,
+      "regime_count": 8
+    },
+    "movement": {
+      "context_length": 128,
+      "target_block_length": 8,
+      "feature_budget": 48,
+      "regime_count": 8
+    },
+    "liquidation": {
+      "context_length": 128,
+      "target_block_length": 8,
+      "feature_budget": 64,
+      "regime_count": 8
+    }
+  },
+  "horizons": {
+    "world_target_days": [1, 3, 7, 15],
+    "training_days": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    "live_days": [1.0, 2.0, 3.0, 5.0, 7.0, 10.0, 15.0],
+    "evaluation_days": [1, 3, 7, 15],
+    "maximum_days": 30.0,
+    "fourier_dimension": 16
+  },
+  "encoder": {
+    "model_dimension": 64,
+    "latent_dimension": 48,
+    "attention_heads": 4,
+    "transformer_layers": 2,
+    "dropout": 0.1,
+    "ema_decay": 0.996,
+    "feature_mask_probability": 0.1,
+    "time_mask_probability": 0.15
+  },
+  "router": {
+    "attention_heads": 4,
+    "top_k_worlds": 2,
+    "hard_top1_inference": false,
+    "world_dropout": 0.15,
+    "freshness_temperature": 1.0,
+    "load_balance_weight": 0.02,
+    "router_entropy_weight": 0.01,
+    "horizon_smoothness_weight": 0.02,
+    "width_monotonicity_weight": 0.02,
+    "use_future_tokens": true,
+    "use_market_state": false,
+    "residual_to_baseline": false,
+    "semantic_role_routing": false
+  },
+  "objective": {
+    "latent_prediction_weight": 1.0,
+    "variance_weight": 1.0,
+    "covariance_weight": 0.04,
+    "temporal_consistency_weight": 0.02,
+    "regime_consistency_weight": 0.02,
+    "regime_balance_weight": 0.05,
+    "quantile_weight": 1.0,
+    "uncertainty_weight": 0.0,
+    "target_window_mode": "disjoint_horizon_bins",
+    "causalize_selected_features": true
+  },
+  "splits": {
+    "minimum_train_rows": 1800,
+    "selection_rows": 365,
+    "router_validation_rows": 150,
+    "calibration_rows": 185,
+    "test_rows": 365,
+    "purge_days": 30
+  },
+  "training": {
+    "batch_size": 64,
+    "world_epochs": 4,
+    "router_epochs": 12,
+    "learning_rate": 0.0005,
+    "weight_decay": 0.0001,
+    "patience": 3,
+    "device": "cpu"
+  },
+  "promotion_gates": {
+    "require_all_tests": true,
+    "require_no_temporal_leakage": true,
+    "require_wis_better_than_strongest_causal_baseline": true,
+    "require_block_bootstrap_confidence": true,
+    "maximum_q05_miss_rate": 0.075,
+    "maximum_single_world_attention_share": 0.8,
+    "minimum_world_attention_share": 0.01,
+    "minimum_effective_regime_count": 2.0,
+    "minimum_mean_regime_confidence": 0.4,
+    "maximum_source_age_days": 2
+  }
+}

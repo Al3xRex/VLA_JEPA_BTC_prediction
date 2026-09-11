@@ -1,0 +1,158 @@
+# GitHub allowlist: main.py and its transitive runtime dependencies.
+# Everything stays on disk; only the entries below are eligible for Git.
+# Add a file here when main.py gains a new dependency.
+*
+
+# Traverse only the directories containing allowed files.
+!/artifacts/
+!/artifacts/final/
+!/artifacts/final/live_forecast/
+!/compute_data/
+!/compute_data/macro/
+!/compute_data/oc/
+!/compute_data/ta/
+!/configs/
+!/configs/final/
+!/dual_model_forecaster/
+!/dual_model_forecaster/jepa/
+!/dual_model_forecaster/world_jepa/
+!/get_data/
+!/get_data/macro/
+!/get_data/manual/
+!/get_data/oc/
+!/get_data/scraped/
+!/get_data/ta/
+!/liquidations/
+!/liquidations/Liquedation heatmap/
+!/liquidations/Liquedation heatmap/data/
+!/liquidations/Liquedation heatmap/data/daily/
+!/liquidations/Liquedation heatmap/outputs/
+!/liquidations/data/
+!/model_assembly/
+
+# Project setup and portfolio README
+!/.gitignore
+!/.python-version
+!/pyproject.toml
+!/uv.lock
+!/README.md
+
+# Python runtime (including main.py optional modes)
+!/compute_data/__init__.py
+!/compute_data/data_classes.py
+!/compute_data/macro/__init__.py
+!/compute_data/macro/fred.py
+!/compute_data/macro/liquidity_fair_value.py
+!/compute_data/oc/__init__.py
+!/compute_data/oc/energy_value.py
+!/compute_data/oc/metcalfe_series.py
+!/compute_data/oc/onchain.py
+!/compute_data/ta/__init__.py
+!/compute_data/ta/algorithms.py
+!/compute_data/ta/choppiness.py
+!/compute_data/ta/dataset_ta.py
+!/compute_data/ta/pca_latent.py
+!/database_interraction.py
+!/dual_model_forecaster/__init__.py
+!/dual_model_forecaster/brutal_baselines.py
+!/dual_model_forecaster/config.py
+!/dual_model_forecaster/data.py
+!/dual_model_forecaster/final_selection.py
+!/dual_model_forecaster/fusion.py
+!/dual_model_forecaster/jepa/__init__.py
+!/dual_model_forecaster/jepa/artifacts.py
+!/dual_model_forecaster/jepa/checkpoints.py
+!/dual_model_forecaster/jepa/config.py
+!/dual_model_forecaster/jepa/datasets.py
+!/dual_model_forecaster/jepa/encode.py
+!/dual_model_forecaster/jepa/feature_contract.py
+!/dual_model_forecaster/jepa/losses.py
+!/dual_model_forecaster/jepa/meta_synthesis.py
+!/dual_model_forecaster/jepa/models.py
+!/dual_model_forecaster/jepa/panels.py
+!/dual_model_forecaster/jepa/pretrain.py
+!/dual_model_forecaster/jepa/semantic_export.py
+!/dual_model_forecaster/jepa/targets.py
+!/dual_model_forecaster/jepa/temporal_safety.py
+!/dual_model_forecaster/jepa/visuals.py
+!/dual_model_forecaster/liquidation_architecture.py
+!/dual_model_forecaster/metrics.py
+!/dual_model_forecaster/semantics.py
+!/dual_model_forecaster/specialists.py
+!/dual_model_forecaster/splits.py
+!/dual_model_forecaster/utils.py
+!/dual_model_forecaster/world_jepa/__init__.py
+!/dual_model_forecaster/world_jepa/config.py
+!/dual_model_forecaster/world_jepa/continuous_horizon.py
+!/dual_model_forecaster/world_jepa/datasets.py
+!/dual_model_forecaster/world_jepa/evaluation.py
+!/dual_model_forecaster/world_jepa/feature_audit.py
+!/dual_model_forecaster/world_jepa/losses.py
+!/dual_model_forecaster/world_jepa/pipeline.py
+!/dual_model_forecaster/world_jepa/preprocessing.py
+!/dual_model_forecaster/world_jepa/regimes.py
+!/dual_model_forecaster/world_jepa/router.py
+!/dual_model_forecaster/world_jepa/training.py
+!/dual_model_forecaster/world_jepa/world_encoder.py
+!/env_loader.py
+!/get_data/__init__.py
+!/get_data/get_fred.py
+!/get_data/macro/__init__.py
+!/get_data/macro/fred.py
+!/get_data/macro/manual.py
+!/get_data/oc/__init__.py
+!/get_data/oc/onchain.py
+!/get_data/scraped/__init__.py
+!/get_data/scraped/checkonchain.py
+!/get_data/scraped/liquidations.py
+!/get_data/ta/__init__.py
+!/get_data/ta/price.py
+!/liquidations/indicator.py
+!/liquidations/main.py
+!/liquidations/signals.py
+!/main.py
+!/model_assembly/__init__.py
+!/model_assembly/common.py
+!/walk_forward_predictions.py
+
+# Runtime configurations
+!/configs/final/refit.yaml
+!/configs/final/specialists.yaml
+!/configs/final/roles.yaml
+!/configs/final/fusion.yaml
+!/configs/final/calibration.yaml
+!/configs/final_role_selection.json
+!/configs/world_jepa.json
+
+# Consumed macro and liquidation inputs; preserve historical feature coverage
+!/get_data/manual/ism_manufactoring
+!/get_data/manual/ism_services
+!/get_data/manual/major_M2
+!/get_data/manual/nfci-data-series-csv.csv
+!/liquidations/data/directional_volatility_potential.csv
+!/liquidations/data/liquidations_daily.csv
+!/liquidations/data/btc_price_daily.csv
+!/liquidations/Liquedation heatmap/data/daily/btc_oi_liquidations_daily.csv
+!/liquidations/Liquedation heatmap/outputs/btc_all_available_history_pressure.csv
+!/liquidations/Liquedation heatmap/outputs/btc_all_available_history_levels.csv
+!/liquidations/Liquedation heatmap/outputs/btc_oi_interest_areas_levels.csv
+
+# README showcase images
+!/artifacts/final/live_forecast/latest_plot.png
+!/artifacts/final/live_forecast/specialist_live_predictions.png
+!/artifacts/final/live_forecast/kalman_projection_scope.png
+
+# Keep credentials and database files excluded, including nested variants.
+.env
+.env.*
+*.env
+*.duckdb
+*.duckdb.*
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.sqlite*
+__pycache__/
+.venv/
+.DS_Store

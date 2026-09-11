@@ -1,0 +1,9 @@
+{
+  "role_map_name": "short_quartile_liquidation",
+  "interface_name": "semantic_delta_interactions",
+  "heads": {
+    "center": ["edges", "movement"],
+    "width": ["environment", "edges", "movement", "liquidation"],
+    "tail": ["structure", "environment", "liquidation"]
+  }
+}
